@@ -191,6 +191,7 @@ def _parse_internal_storage(text: str) -> list[str]:
 def build_qr_string(info: SystemInfo, user: dict[str, str]) -> str:
     keyboard_layout = user.get("keyboard_layout", "")
     laptop_class    = user.get("laptop_class", "")
+    polska_switch   = user.get("polska_switch", "")
     compiled_notes  = user.get("compiled_notes", "")
     nrzwrotu        = user.get("nrzwrotu", "")
     magazyn         = user.get("magazyn", "")
@@ -217,7 +218,7 @@ def build_qr_string(info: SystemInfo, user: dict[str, str]) -> str:
         + sw + "\t"          # camera_switch
         + sw + "\t"          # sound_switch
         + keyboard_layout            + "\t"
-        + sw + "\t"          # polska_switch
+        + polska_switch              + "\t"
         + "None"                     + "\t"   # license
         + laptop_class               + "\t"
         + compiled_notes             + "\t"
@@ -344,9 +345,10 @@ class MainWindow(QMainWindow):
         form.addRow(sep)
 
         # --- User-editable fields ---
-        self._f_layout  = self._rw_field(form, "Layout:")
-        self._f_class   = self._rw_field(form, "Klasa:")
-        self._f_notes   = self._rw_field(form, "Uwagi:")
+        self._f_layout   = self._rw_field(form, "Layout:")
+        self._f_class    = self._rw_field(form, "Klasa:")
+        self._f_wysylka  = self._rw_field(form, "Wysyłka krajowa:")
+        self._f_notes    = self._rw_field(form, "Uwagi:")
         self._f_nrzwrotu = self._rw_field(form, "Nr zwrotu:")
         self._f_magazyn  = self._rw_field(form, "Magazyn:")
         self._f_nrid     = self._rw_field(form, "Nr ID:")
@@ -394,9 +396,7 @@ class MainWindow(QMainWindow):
     @staticmethod
     def _ro_field(form: QFormLayout, label: str) -> QLineEdit:
         edit = QLineEdit()
-        edit.setReadOnly(True)
         edit.setPlaceholderText("wczytywanie…")
-        edit.setStyleSheet("background: transparent; border: none; color: palette(text);")
         form.addRow(label, edit)
         return edit
 
@@ -430,6 +430,7 @@ class MainWindow(QMainWindow):
         user = {
             "keyboard_layout": self._f_layout.text(),
             "laptop_class":    self._f_class.text(),
+            "polska_switch":   self._f_wysylka.text(),
             "compiled_notes":  self._f_notes.text(),
             "nrzwrotu":        self._f_nrzwrotu.text(),
             "magazyn":         self._f_magazyn.text(),
