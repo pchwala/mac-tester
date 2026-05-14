@@ -127,14 +127,16 @@ def gather_system_info() -> SystemInfo:
     info.model_id = _grep(hw, r"Model Identifier:\s*(.+)")
     info.ram_value = _grep(hw, r"Memory:\s*(.+)")
 
-    # CPU — Apple Silicon uses "Chip:", Intel uses sysctl brand_string
+    # CPU — Apple Silicon uses "Chip:", Intel uses sysctl brand_string.
+    # Some Apple Silicon configs also expose brand_string (e.g. "Apple M1").
     chip = _grep(hw, r"^\s*Chip:\s*(.+)")
+    brand_string = _run(["sysctl", "-n", "machdep.cpu.brand_string"])
     if chip:
         info.cpu_model = chip
+    elif brand_string:
+        info.cpu_model = brand_string  # Intel brand string or Apple M-series via sysctl
     else:
-        info.cpu_model = _run(["sysctl", "-n", "machdep.cpu.brand_string"])
-        if not info.cpu_model:
-            info.cpu_model = _grep(hw, r"Processor Name:\s*(.+)")
+        info.cpu_model = _grep(hw, r"Processor Name:\s*(.+)")
 
     # --- Display size from model id lookup ---
     info.monitor_size = MODEL_DISPLAY_SIZE.get(info.model_id, "")
