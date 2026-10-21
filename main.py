@@ -438,7 +438,20 @@ class MainWindow(QMainWindow):
             "magazyn":         self._f_magazyn.text(),
             "nrid":            self._f_nrid.text(),
         }
-        data = build_qr_string(self._info, user)
+        current_info = SystemInfo(
+            serial=self._f_serial.text(),
+            manufacturer=self._f_manufacturer.text(),
+            model_name=self._f_model.text(),
+            cpu_model=self._f_cpu.text(),
+            ram_value=self._f_ram.text(),
+            hdd1_value=self._f_hdd1.text(),
+            hdd2_value=self._f_hdd2.text(),
+            gpu_model=self._f_gpu.text(),
+            battery_cycles=self._f_battery.text(),
+            monitor_size=self._f_display.text(),
+            resolution=self._f_resolution.text(),
+        )
+        data = build_qr_string(current_info, user)
         qr_size = min(
             self._qr_label.width() or 400,
             self._qr_label.height() or 400,
